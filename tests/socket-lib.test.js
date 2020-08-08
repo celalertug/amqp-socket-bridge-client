@@ -29,7 +29,7 @@ describe('socket-lib test', async () => {
     const io = socketIO(httpServer);
 
     io.on('connection', async (socket) => {
-      socketConsume(socket, 'hello-motherfucker', async (body) => {
+      socketConsume(socket, 'surprise-motherfucker', async (body) => {
         // await wait(10);
         const { value } = JSON.parse(body);
         return { response: value * value };
@@ -58,7 +58,7 @@ describe('socket-lib test', async () => {
   });
 
   it('should standalone', async () => {
-    const res = await socketRequest(SOCKET_IO_HOST, SOCKET_IO_PORT, 'hello-motherfucker', JSON.stringify({ value: 10 }));
+    const res = await socketRequest(SOCKET_IO_HOST, SOCKET_IO_PORT, 'surprise-motherfucker', JSON.stringify({ value: 10 }));
     // console.log(res);
     assert.deepStrictEqual(res, { response: 100 });
   });
@@ -68,7 +68,7 @@ describe('socket-lib test', async () => {
   });
 
   it('should standalone parallel', async () => {
-    const res = await Promise.all(range(20).map((i) => socketRequest(SOCKET_IO_HOST, SOCKET_IO_PORT, 'hello-motherfucker', JSON.stringify({ value: i * 10 }))));
+    const res = await Promise.all(range(20).map((i) => socketRequest(SOCKET_IO_HOST, SOCKET_IO_PORT, 'surprise-motherfucker', JSON.stringify({ value: i * 10 }))));
     // console.log(res);
     assert.deepStrictEqual(res, [
       { response: 0 }, { response: 100 },

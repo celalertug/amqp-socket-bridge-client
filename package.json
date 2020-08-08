@@ -1,6 +1,6 @@
 {
   "name": "amqp-socket-bridge-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "amqp socket bridge client",
   "main": "index.js",
   "repository": "https://github.com/celalertug/amqp-socket-bridge-client",

@@ -32,7 +32,7 @@ const { SocketServiceCreator } = require('amqp-socket-bridge-client');
 
   const socketService = SocketServiceCreator('localhost', 6000, 'hebele-hubele-exchange');
 
-  let res = await socketService.rpcRequest('mock.echo', JSON.stringify({ hello: 'motherfucker' }));
+  let res = await socketService.rpcRequest('mock.echo', JSON.stringify({ hello: 'cat' }));
   // unlike the amqp rpc requester, res is a string
   res = JSON.parse(res);
   console.log(res);
@@ -40,7 +40,7 @@ const { SocketServiceCreator } = require('amqp-socket-bridge-client');
     code: 200,
     success: true,
     message: 'ok',
-    data: { hello: 'motherfucker' },
+    data: { hello: 'cat' },
   });
 
   await amqpService.close();
@@ -61,15 +61,15 @@ const { SocketServiceCreator } = require('amqp-socket-bridge-client');
   await socketService.consume('mock.echo', 'mock-echo', async (msg) => {
     const r = JSON.parse(msg);
     console.log(r);
-    assert.deepStrictEqual(r, { hello: 'motherfucker' });
+    assert.deepStrictEqual(r, { hello: 'cat' });
 
     return JSON.stringify({ echo: r });
   });
 
   const s = await ServiceCreator('localhost', 'hebele-hubele-exchange');
-  let res = await s.rpcRequest('bridge.mock.echo', JSON.stringify({ hello: 'motherfucker' }));
+  let res = await s.rpcRequest('bridge.mock.echo', JSON.stringify({ hello: 'cat' }));
   res = JSON.parse(res.content.toString());
-  assert.deepStrictEqual(res, { echo: { hello: 'motherfucker' } });
+  assert.deepStrictEqual(res, { echo: { hello: 'cat' } });
   console.log(res);
 
   s.close();
