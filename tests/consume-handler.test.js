@@ -80,7 +80,6 @@ describe('consume-handler test', async () => {
     //client service 1
     let res = await serviceConsumer.rpcRequest('bridge.message', JSON.stringify({ value: 13 }));
     res = JSON.parse(res.content.toString());
-    // bridge response 5
     // console.log(res);
     assert.deepStrictEqual(res,{ user: 'hayri' });
 

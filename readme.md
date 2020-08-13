@@ -47,6 +47,40 @@ const { SocketServiceCreator } = require('amqp-socket-bridge-client');
 })();
 ```
 
+#### mobile to service 2
+
+```js
+const assert = require('assert');
+
+const { ServiceCreator } = require('amqp-rpc-node-client');
+const { SocketServiceCreator } = require('amqp-socket-bridge-client');
+
+(async () => {   
+    const socketService = SocketServiceCreator(SOCKET_IO_HOST, SOCKET_IO_PORT, RABBITMQ_EXCHANGE);
+               
+    let headerMessage;
+    await socketService.consumeOnly('message', '', async (msg, headers) => {
+
+     const received = JSON.parse(msg);
+     assert.deepStrictEqual(received, { value: 13 });
+     headerMessage = headers;
+
+    });
+    
+    // send response seperate process
+    setTimeout(async () => {
+     await socketService.sendResponse(JSON.stringify({ user: 'hayri' }), headerMessage);
+    }, 500);
+    
+    //client service request
+     const serviceConsumer = await ServiceCreator('localhost', 'hebele-hubele-exchange');
+    let res = await serviceConsumer.rpcRequest('bridge.message', JSON.stringify({ value: 13 }));
+    res = JSON.parse(res.content.toString());
+    assert.deepStrictEqual(res,{ user: 'hayri' });
+ })() 
+```
+
+
 
 #### service to mobile
 
