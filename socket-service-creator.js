@@ -70,11 +70,48 @@ const SocketServiceCreator = (host, port, exchange) => {
     });
   });
 
+  const consumeOnly = (topic, queue, cb = async () => {}) => new Promise((resolve) => {
+    const socket = clientIO(`http://${host}:${port}`);
+    socket.on('connect', () => {
+      socket.on(topic, async (msg) => {
+        const { headers, body } = JSON.parse(msg);
+
+        // const res = await cb(body);
+        await cb(body, headers);
+      });
+      resolve();
+    });
+  });
+
+  const sendResponse = (bodyStr, headers) => new Promise((resolve) => {
+    const socket = clientIO(`http://${host}:${port}`);
+    socket.on('connect', () => {
+      setTimeout(() => {
+        socket.close();
+        return resolve();
+      }, 500);
+
+      const { replyTo, correlationId } = headers;
+      socket.emit('client-response', JSON.stringify({
+        headers: {
+          replyTo,
+          correlationId,
+        },
+        body: bodyStr,
+      }), () => {
+        socket.close();
+        return resolve();
+      });
+    });
+  });
+
   return {
     rpcRequest,
     sendToQueue,
     fireAndForget,
     consume,
+    consumeOnly,
+    sendResponse,
   };
 };
 

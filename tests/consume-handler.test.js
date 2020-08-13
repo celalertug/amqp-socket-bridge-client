@@ -1,5 +1,6 @@
 /* eslint-disable */
-require('dotenv').config();
+require('dotenv')
+  .config();
 const assert = require('assert');
 
 const { ServiceCreator } = require('amqp-rpc-node-client');
@@ -19,7 +20,7 @@ describe('consume-handler test', async () => {
 
   before(async () => {
     serviceConsumer = await ServiceCreator(RABBITMQ_HOST, RABBITMQ_EXCHANGE);
-    listener = await bridgeService(serviceConsumer,SOCKET_IO_PORT);
+    listener = await bridgeService(serviceConsumer, SOCKET_IO_PORT);
 
   });
 
@@ -56,6 +57,32 @@ describe('consume-handler test', async () => {
     res = JSON.parse(res.content.toString());
     // bridge response 5
     assert.deepStrictEqual(res, { don: 'client consumer response' });
+
+  });
+
+  it('should consumeOnly and sendResponse', async () => {
+
+    const socketService = SocketServiceCreator(SOCKET_IO_HOST, SOCKET_IO_PORT, RABBITMQ_EXCHANGE);
+
+    let headerMessage;
+    await socketService.consumeOnly('message', '', async (msg, headers) => {
+      const received = JSON.parse(msg);
+      // console.log('message successfully received ', received);
+      assert.deepStrictEqual(received, { value: 13 });
+
+      headerMessage = headers;
+    });
+
+    setTimeout(async () => {
+      await socketService.sendResponse(JSON.stringify({ user: 'hayri' }), headerMessage);
+    }, 500);
+
+    //client service 1
+    let res = await serviceConsumer.rpcRequest('bridge.message', JSON.stringify({ value: 13 }));
+    res = JSON.parse(res.content.toString());
+    // bridge response 5
+    // console.log(res);
+    assert.deepStrictEqual(res,{ user: 'hayri' });
 
   });
 
