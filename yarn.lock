@@ -75,6 +75,22 @@ amqp-rpc-node-client@^0.0.4:
     lodash "^4.17.15"
     uuid "^8.3.0"
 
+amqp-socket-bridge-client@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/amqp-socket-bridge-client/-/amqp-socket-bridge-client-0.0.3.tgz#1c687a02f09f1228036f764dac85f508732f8032"
+  integrity sha512-0jX0U/8iJ8Mr+Dan+xtliFg6bMyIZJTxXlPAY+A1lRiGgIh4Mctosptg+hsCHealPi49AKm/YxcHGuHIXwBtAQ==
+  dependencies:
+    amqp-rpc-node-client "^0.0.4"
+    axios "^0.19.2"
+    body-parser "^1.19.0"
+    cors "^2.8.5"
+    dotenv "^8.2.0"
+    express "^4.17.1"
+    lodash "^4.17.15"
+    socket.io "^2.3.0"
+    socket.io-client "^2.3.0"
+    uuid "^8.3.0"
+
 amqplib@^0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/amqplib/-/amqplib-0.6.0.tgz#87857c7c95d56d22438ced4cf1f7e5f0dc43b309"

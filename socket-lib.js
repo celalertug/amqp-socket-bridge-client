@@ -21,7 +21,7 @@ const socketConsume = (socket, channel, cb = async () => {
   });
 };
 
-const socketRequest = (host, port, channel, msg,
+const socketRequestBase = (uri, channel, msg,
   config = {
     timeout: 0,
     noReply: false,
@@ -30,7 +30,8 @@ const socketRequest = (host, port, channel, msg,
   const correlationId = v4();
   const replyTo = noReply === false ? v4() : '';
 
-  const socket = clientIO(`http://${host}:${port}`);
+  const socket = clientIO(uri);
+  // const socket = clientIO(`http://${host}:${port}`);
   socket.on('connect', () => {
     if (timeout > 0 && noReply === false) {
       setTimeout(() => {
@@ -64,6 +65,17 @@ const socketRequest = (host, port, channel, msg,
     });
   });
 });
+
+const socketRequest = (host, port, channel, msg,
+  config = {
+    timeout: 0,
+    noReply: false,
+  }) => {
+  if (port) {
+    return socketRequestBase(`http://${host}:${port}`, channel, msg, config);
+  }
+  return socketRequestBase(host, channel, msg, config);
+};
 
 module.exports = {
   socketRequest,

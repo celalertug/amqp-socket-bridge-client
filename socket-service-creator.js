@@ -2,6 +2,8 @@ const clientIO = require('socket.io-client');
 const { socketRequest } = require('./socket-lib.js');
 
 const SocketServiceCreator = (host, port, exchange) => {
+  const uri = port ? `http://${host}:${port}` : host;
+
   const rpcRequest = async (topic, msgStr, timeout = 0) => socketRequest(
     host,
     port,
@@ -42,7 +44,8 @@ const SocketServiceCreator = (host, port, exchange) => {
   );
 
   const consume = (topic, queue, cb = async () => {}) => new Promise((resolve) => {
-    const socket = clientIO(`http://${host}:${port}`);
+    const socket = clientIO(uri);
+    // const socket = clientIO(`http://${host}:${port}`);
     socket.on('connect', () => {
       socket.on(topic, async (msg) => {
         const { headers, body } = JSON.parse(msg);
@@ -71,7 +74,7 @@ const SocketServiceCreator = (host, port, exchange) => {
   });
 
   const consumeOnly = (topic, queue, cb = async () => {}) => new Promise((resolve) => {
-    const socket = clientIO(`http://${host}:${port}`);
+    const socket = clientIO(uri);
     socket.on('connect', () => {
       socket.on(topic, async (msg) => {
         const { headers, body } = JSON.parse(msg);
@@ -84,7 +87,7 @@ const SocketServiceCreator = (host, port, exchange) => {
   });
 
   const sendResponse = (bodyStr, headers) => new Promise((resolve) => {
-    const socket = clientIO(`http://${host}:${port}`);
+    const socket = clientIO(uri);
     socket.on('connect', () => {
       setTimeout(() => {
         socket.close();
